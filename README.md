@@ -94,3 +94,126 @@ The **Container Runtime** (e.g., Docker Shim, CRI-O) executes and manages contai
 - **Container Runtime:** Executes and manages containers within Pods.
 
 Understanding this architecture provides insights into how Kubernetes efficiently manages containerized applications, offering scalability, resilience, and ease of deployment.
+
+# Managing Kubernetes Clusters with KOPS
+
+## Introduction
+
+In the world of Kubernetes, managing the lifecycle of clusters efficiently is crucial, especially when dealing with production systems. This documentation explores the use of KOPS (Kubernetes Operations), a powerful tool in the DevOps arsenal, for creating, upgrading, and deleting clusters. 
+
+## Kubernetes Distributions
+
+Kubernetes, being an open-source container orchestration platform, has various distributions developed on top of it. Some popular distributions include:
+
+- **Kubernetes (Direct):**
+  - Suitable for staging, pre-production, and testing environments.
+  
+- **EKS (Amazon Elastic Kubernetes Service):**
+  - A managed Kubernetes service by Amazon, providing support and additional tools.
+  
+- **Openshift, Rancher, VMware Tanzu:**
+  - These are distributions that enhance the user experience on top of Kubernetes, adding specific features and user-friendly interfaces.
+
+### Choosing Between Kubernetes and EKS
+
+The primary difference lies in support. While installing Kubernetes directly on EC2 instances requires self-management and offers no official support, EKS provides managed support from Amazon, along with additional tools and scripts.
+
+## Managing Multiple Clusters
+
+### Tools Used
+
+- **KOPS (Kubernetes Operations):**
+  - KOPS is a versatile tool that aids in managing the lifecycle of Kubernetes clusters. It simplifies cluster creation, upgrades, and deletion.
+
+- **Other Tools (e.g., kubeadm):**
+  - Various tools are available for managing Kubernetes clusters, but KOPS stands out for its comprehensive capabilities.
+
+## Kubernetes Installation Using KOPS on EC2
+
+### Create an EC2 instance or use your personal laptop.
+
+Dependencies required 
+
+1. Python3
+2. AWS CLI
+3. kubectl
+
+###  Install dependencies
+
+```
+curl -s https://packages.cloud.google.com/apt/doc/apt-key.gpg | sudo apt-key add -
+```
+
+```
+echo "deb https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee -a /etc/apt/sources.list.d/kubernetes.list
+```
+
+```
+sudo apt-get update
+sudo apt-get install -y python3-pip apt-transport-https kubectl
+```
+
+```
+pip3 install awscli --upgrade
+```
+
+```
+export PATH="$PATH:/home/ubuntu/.local/bin/"
+```
+
+### Install KOPS (our hero for today)
+
+```
+curl -LO https://github.com/kubernetes/kops/releases/download/$(curl -s https://api.github.com/repos/kubernetes/kops/releases/latest | grep tag_name | cut -d '"' -f 4)/kops-linux-amd64
+
+chmod +x kops-linux-amd64
+
+sudo mv kops-linux-amd64 /usr/local/bin/kops
+```
+
+### Provide the below permissions to your IAM user. If you are using the admin user, the below permissions are available by default
+
+1. AmazonEC2FullAccess
+2. AmazonS3FullAccess
+3. IAMFullAccess
+4. AmazonVPCFullAccess
+
+### Set up AWS CLI configuration on your EC2 Instance or Laptop.
+
+Run `aws configure`
+
+## Kubernetes Cluster Installation 
+
+Please follow the steps carefully and read each command before executing.
+
+### Create S3 bucket for storing the KOPS objects.
+
+```
+aws s3api create-bucket --bucket kops-abhi-storage --region us-east-1
+```
+
+### Create the cluster 
+
+```
+kops create cluster --name=demok8scluster.k8s.local --state=s3://kops-abhi-storage --zones=us-east-1a --node-count=1 --node-size=t2.micro --master-size=t2.micro  --master-volume-size=8 --node-volume-size=8
+```
+
+### Important: Edit the configuration as there are multiple resources created which won't fall into the free tier.
+
+```
+kops edit cluster myfirstcluster.k8s.local
+```
+
+Step 12: Build the cluster
+
+```
+kops update cluster demok8scluster.k8s.local --yes --state=s3://kops-abhi-storage
+```
+
+This will take a few minutes to create............
+
+After a few mins, run the below command to verify the cluster installation.
+
+```
+kops validate cluster demok8scluster.k8s.local
+```git 
