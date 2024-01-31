@@ -277,7 +277,7 @@ You can save this YAML content in a file, for example, `mypod.yaml`, and create 
 
 Assuming you have a POD definition in a YAML file (pod.yml), use the following command to create the POD:
   ```bash
-  kubectl create -f pod.yml
+  kubectl create -f mypod.yml
   ```
 
 ### 3. Check POD Status
