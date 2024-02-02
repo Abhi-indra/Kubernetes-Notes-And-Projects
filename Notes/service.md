@@ -57,3 +57,102 @@ Kubernetes Services play a crucial role in enhancing the functionality, accessib
      - **Node Port:** Exposes the Service on a specific port of each cluster node, enabling external access through the node's IP.
      - **Load Balancer:** Exposes the Service using a cloud provider's load balancer, ideal for external traffic management.
 
+# Demo
+
+### 1. Install kubectl:
+Install `kubectl` based on your operating system by following the instructions on the [official Kubernetes documentation](https://kubernetes.io/docs/tasks/tools/install-kubectl/).
+
+### 2. Install Minikube:
+Install `Minikube` based on your operating system by following the instructions on the [official Minikube documentation](https://minikube.sigs.k8s.io/docs/start/).
+
+### 3. Go to Application Folder:
+```bash
+cd path/to/your/application
+```
+
+### 4. Create Dockerfile:
+Create a `Dockerfile` in your application folder. This example assumes you have a simple web application with static HTML files.
+```Dockerfile
+# Use the official Nginx base image
+FROM nginx:latest
+
+# Copy the content of the current directory to the default Nginx public folder
+COPY . /usr/share/nginx/html
+```
+
+### 5. Build Docker Image:
+Build the Docker image using the following command:
+```bash
+docker build -t your-image-name .
+```
+
+### 6. Create Deployment YAML:
+Create a `deployment.yml` file to define how Kubernetes should deploy your application.
+```yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: your-deployment
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: your-app
+  template:
+    metadata:
+      labels:
+        app: your-app
+    spec:
+      containers:
+      - name: your-container
+        image: your-image-name
+```
+
+### 7. Create Deployment:
+Apply the deployment YAML to create the deployment in the Kubernetes cluster.
+```bash
+kubectl apply -f deployment.yml
+```
+
+### 8. Check Deployment Status:
+Check the status of the deployed Pods.
+```bash
+kubectl get pods
+kubectl get pods -o wide
+kubectl describe pods
+```
+
+### 9. Create Service YAML:
+Create a `service.yml` file to define how your application should be exposed.
+```yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: your-service
+spec:
+  selector:
+    app: your-app
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: 80
+  type: NodePort
+```
+
+### 10. Create Service:
+Apply the service YAML to create the service in the Kubernetes cluster.
+```bash
+kubectl apply -f service.yml
+```
+
+### 11. Access Application Outside the Cluster:
+Use Minikube to open the application in the default web browser.
+```bash
+minikube service your-service
+```
+
+This command will automatically open your web application in the default web browser.
+
+### Conclusion:
+
+Following these detailed steps and code examples, you've successfully set up a local Kubernetes cluster using Minikube, deployed a web application, and exposed it to the external world using a Kubernetes Service. You can now access and interact with your application as if it were running in a production environment.
