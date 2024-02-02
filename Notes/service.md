@@ -155,4 +155,4 @@ This command will automatically open your web application in the default web bro
 
 ### Conclusion:
 
-Following these detailed steps and code examples, you've successfully set up a local Kubernetes cluster using Minikube, deployed a web application, and exposed it to the external world using a Kubernetes Service. You can now access and interact with your application as if it were running in a production environment.
+Following these detailed steps and code examples, you've successfully set up a local Kubernetes cluster using Minikube, deployed a web application, and exposed it.
