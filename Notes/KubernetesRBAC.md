@@ -122,6 +122,6 @@ You might create a ClusterRole named "node-reader" that grants permissions to re
 | Aspect           | Role                          | ClusterRole                   |
 |------------------|-------------------------------|-------------------------------|
 | **Scope**        | Specific Namespace            | Entire Cluster                |
-| **Use Case**     | Manage Access within Namespace| Manage Access across Cluster |
+| **Use Case**     | Manage Access within Namespace| Manage Access across Cluster  |
 
 **********************************************************************************
